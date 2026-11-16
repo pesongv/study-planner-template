@@ -44,6 +44,15 @@ const SECTIONS: { emoji: string; title: string; steps: React.ReactNode[] }[] = [
     ],
   },
   {
+    emoji: "📷", title: "문제를 사진으로 입력하기 (폰 기능, 무료)",
+    steps: [
+      <><b>아이폰</b>: 문제 칸을 길게 누르기 › <b>텍스트 스캔</b> › 문제에 카메라 대기 › <b>입력</b></>,
+      <><b>갤럭시</b>: 문제 칸을 누르고 키보드 위 <b>⋯</b> › <b>텍스트 추출</b> (또는 사진 앱의 <b>T</b> 버튼으로 글자 복사)</>,
+      <><b>구글 렌즈</b>: 사진에서 글자 선택 › <b>복사</b> › 문제 칸에 붙여 넣기</>,
+      <>수식(x², √, 분수)은 조금 틀리게 읽힐 수 있어요. 붙여 넣은 뒤 <b>한 번 확인하고 고쳐요</b></>,
+    ],
+  },
+  {
     emoji: "📊", title: "리포트",
     steps: [<><Link href="/report" className="text-indigo-600 underline">리포트</Link>에서 이번 주 요일별·과목별 공부 시간을 보고 한 주를 돌아봐요</>],
   },

@@ -125,6 +125,7 @@ function MakeQuiz({ made, onDone }: { made: QuizView[]; onDone: () => void }) {
           <input name="subject" placeholder="과목 (예: 과학)" list="quiz-subjects" maxLength={20} className="input" />
           <datalist id="quiz-subjects">{["국어", "영어", "수학", "과학", "사회", "역사"].map((s) => <option key={s} value={s} />)}</datalist>
           <textarea name="question" required maxLength={300} rows={2} placeholder="문제 (예: 식물이 빛으로 양분을 만드는 과정은?)" className="input py-2" />
+          <p className="-mt-1 text-xs text-zinc-500">📷 문제를 사진으로 넣고 싶으면 폰의 <b>텍스트 스캔·텍스트 추출</b>을 써요 (<Link href="/help" className="underline">방법 보기</Link>)</p>
 
           {type === "short" && <input value={answer} onChange={(e) => setAnswer(e.target.value)} required maxLength={100} placeholder="정답 (예: 광합성)" className="input" />}
           {type === "ox" && (
