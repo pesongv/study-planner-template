@@ -130,7 +130,7 @@ function StudentDetail() {
                       <span className="text-zinc-500">{short(q.date)}</span> {q.subject && `[${q.subject}] `}{q.question}
                       <span className="text-zinc-500"> → {q.answer}</span>{" "}
                       <span className={q.result === "정답" ? "text-emerald-600" : q.result === "오답" ? "text-rose-600" : "text-zinc-400"}>
-                        {q.result === "정답" ? "⭕" : q.result === "오답" ? "❌" : "·아직"}
+                        {q.result === "정답" ? "⭕" : q.result === "오답" ? "❌" : "⏳ 풀기 전"}
                       </span>
                     </li>
                   ))}
