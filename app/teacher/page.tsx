@@ -136,7 +136,26 @@ export default function TeacherPage() {
           <a href="/api/teacher/export.csv" download className="min-h-11 content-center rounded-lg border px-3 text-sm">📥 이번 달 기록 CSV</a>
         </div>
         <p className="text-xs text-zinc-500">이름을 누르면 학생별 자세한 기록을 볼 수 있어요.</p>
-        <div className="overflow-x-auto">
+        {/* 폰: 학생마다 카드 / 넓은 화면: 표 */}
+        <ul className="flex flex-col gap-2 md:hidden">
+          {students.map((s) => (
+            <li key={s.student_id} className="flex items-center gap-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+              <span className="w-8 shrink-0 text-center text-xs text-zinc-500">{s.seat_no}번</span>
+              <div className="min-w-0 flex-1">
+                <Link href={`/teacher/student/${s.student_id}`} className="font-semibold text-indigo-600 underline">{s.name}</Link>
+                <span className="ml-1 text-xs text-zinc-500">{s.student_id}</span>
+                <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-zinc-600 dark:text-zinc-400">
+                  <span>{s.certified ? "🏅 인증" : "인증 -"}</span>
+                  <span>⏱️ {s.todayMinutes ? `${s.todayMinutes}분` : "-"}</span>
+                  <span>⭐ {s.monthStars || 0}</span>
+                  <span className={s.must_change_pw ? "text-rose-600" : ""}>{s.must_change_pw ? "비번 아직" : "비번 ✓"}</span>
+                </div>
+              </div>
+              <button onClick={() => reset(s)} className="min-h-11 shrink-0 px-1 text-xs text-rose-600 underline">초기화</button>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="text-left text-zinc-500">
               <tr><th className="py-2">자리</th><th>학번</th><th>이름</th><th>오늘 인증</th><th>오늘 공부</th><th>이번 달 ⭐</th><th>비밀번호</th><th></th></tr>
