@@ -1,6 +1,6 @@
 import { requireSession } from "@/lib/auth";
 import { lastActivity, maskName, openSession } from "@/lib/attendance";
-import { readTabs, SHARED_CACHE_MS } from "@/lib/sheets";
+import { readTabs, SHARED_CACHE_MS } from "@/lib/db";
 import { today } from "@/lib/time";
 
 /** 독서실 현황: 자리마다 이름(학생에게는 가림, 선생님에게는 실명), 캐릭터, 앉아 있는지. */

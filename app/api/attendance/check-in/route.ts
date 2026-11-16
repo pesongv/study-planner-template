@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { requireSession } from "@/lib/auth";
 import { lastActivity, openSession } from "@/lib/attendance";
-import { append, readTabs } from "@/lib/sheets";
+import { append, readTabs } from "@/lib/db";
 import { now, today } from "@/lib/time";
 
 export async function POST() {

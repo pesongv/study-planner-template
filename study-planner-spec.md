@@ -19,7 +19,7 @@
 |---|---|
 | 대상 | 중학생, 우리 반 25명 |
 | 로그인 | 학번 + 비밀번호 (이메일 없음) |
-| 데이터 저장 | **구글 스프레드시트** (Supabase 사용 안 함) |
+| 데이터 저장 | **수파베이스(Postgres)** — 처음엔 구글 시트였으나 동시 접속 한도(1분 60회 읽기) 오류로 2026-11-16 변경. 표 이름·열은 6번과 같음 (`supabase/schema.sql`) |
 | 배포 | GitHub → Vercel (무료 플랜) |
 | 캐릭터 | **자체 제작 도트풍 SVG 캐릭터** 8~12종, 나중에 CC0 에셋으로 교체 가능한 구조 |
 | 공부 인증 | 타이머 기록 + 한 줄 회고 + 미니 퀴즈 (**사진 인증은 1차 버전 제외**) |
@@ -59,9 +59,8 @@
 ## 5. 환경변수 (`.env.local` / Vercel)
 
 ```
-GOOGLE_SERVICE_ACCOUNT_EMAIL=
-GOOGLE_PRIVATE_KEY=            # 줄바꿈은 \n 으로 저장, 코드에서 replace 처리
-GOOGLE_SHEET_ID=
+SUPABASE_URL=                  # https://xxxx.supabase.co
+SUPABASE_SECRET_KEY=           # sb_secret_... (서버 전용, 절대 공개 금지)
 JWT_SECRET=                    # 32자 이상 랜덤 문자열
 TEACHER_INIT_PASSWORD=         # 최초 교사 계정 생성용 (생성 후 제거)
 ```

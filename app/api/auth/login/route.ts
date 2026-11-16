@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { findUser, hash, setSession, verifyPw } from "@/lib/auth";
 import { now } from "@/lib/time";
-import { append, ensureTabs } from "@/lib/sheets";
+import { append, ensureTabs } from "@/lib/db";
 
 const Body = z.object({ student_id: z.string().trim().min(1).max(20), password: z.string().min(1).max(100) });
 

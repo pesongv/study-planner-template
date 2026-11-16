@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { requireSession } from "@/lib/auth";
-import { createGoals, myGoals, RangeItemSchema } from "@/lib/goal-store";
-import { append } from "@/lib/sheets";
+import { createGoals, myGoals, RangeItemSchema, saveGoals } from "@/lib/goal-store";
 import { addDays, mondayOf, rangeLabel, splitRanges, weekTitle, type Goal } from "@/lib/goals";
 import { now, today } from "@/lib/time";
 
@@ -57,7 +56,7 @@ export async function POST(req: Request) {
       title: weekTitle(goal.title, monday), subject: goal.subject, target_amount: amount, unit,
     });
   }
-  if (writes.length) await append("목표", writes);
+  await saveGoals(writes);
   const createdWeeks = newWeeks.length ? await createGoals(s.sid, newWeeks) : [];
   const weekOf = new Map([...weeks, ...createdWeeks].map((w) => [w.period_start, w.goal_id]));
 

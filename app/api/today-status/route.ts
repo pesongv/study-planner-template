@@ -1,7 +1,7 @@
 import { requireSession } from "@/lib/auth";
 import { certify } from "@/lib/journal";
 import { latestGoals } from "@/lib/goals";
-import { readTabs } from "@/lib/sheets";
+import { readTabs } from "@/lib/db";
 import { today } from "@/lib/time";
 
 /** 오늘 인증 상태 (4가지 중 2개 이상이면 완료) */

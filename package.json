@@ -7,12 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "init-sheet": "node --env-file=.env.local --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/init-sheet.mjs",
     "check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "googleapis": "^189.0.0",
     "jose": "^6.2.16",
     "next": "16.4.5",
     "react": "19.3.0",

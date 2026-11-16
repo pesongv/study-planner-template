@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { requireSession } from "@/lib/auth";
 import { latestReflection, MOODS } from "@/lib/journal";
-import { append, readTab } from "@/lib/sheets";
+import { append, readTab } from "@/lib/db";
 import { now, today } from "@/lib/time";
 
 /** 오늘 내 회고 (없으면 null) */

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { hash, requireSession, tempPassword, type User } from "@/lib/auth";
 import { now } from "@/lib/time";
-import { append, readTab } from "@/lib/sheets";
+import { append, readTab } from "@/lib/db";
 import { loadStars } from "@/lib/star-store";
 
 export async function GET() {

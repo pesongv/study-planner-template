@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { findUser, hash, requireSession, setSession, verifyPw } from "@/lib/auth";
-import { updateRow } from "@/lib/sheets";
+import { updateRow } from "@/lib/db";
 
 const Body = z.object({
   current: z.string().min(1).max(100),

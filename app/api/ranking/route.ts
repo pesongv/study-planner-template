@@ -1,7 +1,7 @@
 import { requireSession } from "@/lib/auth";
 import { maskName } from "@/lib/attendance";
 import { loadStars } from "@/lib/star-store";
-import { SHARED_CACHE_MS } from "@/lib/sheets";
+import { SHARED_CACHE_MS } from "@/lib/db";
 
 const TOP = 5;
 

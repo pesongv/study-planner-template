@@ -1,8 +1,8 @@
-// 목표 탭 읽기/쓰기 (서버 전용). 쓰기는 항상 append — 같은 goal_id의 마지막 줄이 현재 상태
+// 목표 읽기/쓰기 (서버 전용). 새 목표는 추가, 고칠 때는 그 줄을 바로 고침
 import "server-only";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { append, readTab } from "./sheets";
+import { append, readTab, updateRow } from "./db";
 import { latestGoals, type Goal } from "./goals";
 import { now } from "./time";
 
@@ -20,11 +20,15 @@ export async function createGoals(sid: string, goals: Partial<Goal>[]) {
   return rows;
 }
 
-/** 기존 목표 변경 = 바뀐 전체 줄을 새로 append. */
+/** 기존 목표 고치기 (goal에 붙은 _id로 그 줄을 덮어씀) */
 export async function saveGoal(goal: Goal) {
   const row = { ...goal, updated_at: now() };
-  await append("목표", [row]);
+  await updateRow("목표", -1, row);
   return row;
+}
+
+export async function saveGoals(goals: Goal[]) {
+  await Promise.all(goals.map(saveGoal));
 }
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { findUser, hash, requireSession, tempPassword } from "@/lib/auth";
-import { updateRow } from "@/lib/sheets";
+import { updateRow } from "@/lib/db";
 
 const Body = z.object({ student_id: z.string().trim().regex(/^\d{4,6}$/) });
 

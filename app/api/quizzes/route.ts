@@ -2,7 +2,7 @@ import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { requireSession } from "@/lib/auth";
 import { QUIZ_PER_DAY, type Quiz } from "@/lib/journal";
-import { append, readTab } from "@/lib/sheets";
+import { append, readTab } from "@/lib/db";
 import { today } from "@/lib/time";
 
 const view = (q: Quiz, withAnswer: boolean) => ({

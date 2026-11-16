@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { findUser, requireSession } from "@/lib/auth";
 import { CHARACTERS } from "@/lib/characters";
-import { updateRow } from "@/lib/sheets";
+import { updateRow } from "@/lib/db";
 
 const Body = z.object({ character: z.enum(CHARACTERS.map((c) => c.id) as [string, ...string[]]) });
 

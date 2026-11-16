@@ -3,7 +3,7 @@ import { requireSession } from "@/lib/auth";
 import { loadStars } from "@/lib/star-store";
 import { latestGoals, mondayOf } from "@/lib/goals";
 import { weekReport, weekReviewOf } from "@/lib/report";
-import { append } from "@/lib/sheets";
+import { append } from "@/lib/db";
 import { now } from "@/lib/time";
 
 const Week = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);

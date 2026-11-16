@@ -1,6 +1,6 @@
 import { requireSession } from "@/lib/auth";
 import { lastActivity, openSession } from "@/lib/attendance";
-import { readTabs, updateRow } from "@/lib/sheets";
+import { readTabs, updateRow } from "@/lib/db";
 import { now, today } from "@/lib/time";
 
 export async function POST() {

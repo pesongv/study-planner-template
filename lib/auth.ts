@@ -3,7 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { COOKIE, cookieOptions, signSession, verifySession, type Session } from "./session";
-import { readTab } from "./sheets";
+import { readTab } from "./db";
 import type { Row } from "./schema";
 
 export type User = Row<"학생">;

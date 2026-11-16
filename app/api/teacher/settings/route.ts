@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { requireSession } from "@/lib/auth";
-import { append } from "@/lib/sheets";
+import { append } from "@/lib/db";
 import { today } from "@/lib/time";
 
 const Body = z.object({

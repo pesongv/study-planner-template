@@ -1,6 +1,6 @@
 import { requireSession } from "@/lib/auth";
 import { latestSettings } from "@/lib/achieve";
-import { readTabs, SHARED_CACHE_MS } from "@/lib/sheets";
+import { readTabs, SHARED_CACHE_MS } from "@/lib/db";
 
 /** 학급 공통: 선생님 응원 메시지, 학급 공동 목표(시간)와 지금까지 모은 시간 */
 export async function GET() {

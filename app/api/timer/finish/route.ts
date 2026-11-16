@@ -2,7 +2,7 @@ import { z } from "zod";
 import { requireSession } from "@/lib/auth";
 import { verifyTimer } from "@/lib/session";
 import { myGoals } from "@/lib/goal-store";
-import { append, readTab } from "@/lib/sheets";
+import { append, readTab } from "@/lib/db";
 import { METHODS, starsFor, type Method } from "@/lib/study";
 import { now, today } from "@/lib/time";
 

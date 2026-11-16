@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { requireSession } from "@/lib/auth";
 import { isCorrect } from "@/lib/journal";
-import { readTab, updateRow } from "@/lib/sheets";
+import { readTab, updateRow } from "@/lib/db";
 import { today } from "@/lib/time";
 
 const Body = z.object({ answer: z.string().max(100) });
