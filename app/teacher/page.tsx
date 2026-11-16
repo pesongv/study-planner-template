@@ -144,8 +144,10 @@ export default function TeacherPage() {
               <div className="min-w-0 flex-1">
                 <Link href={`/teacher/student/${s.student_id}`} className="font-semibold text-indigo-600 underline">{s.name}</Link>
                 <span className="ml-1 text-xs text-zinc-500">{s.student_id}</span>
+                <span className={`ml-1.5 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[11px] ${s.certified ? "bg-emerald-100 font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800"}`}>
+                  {s.certified ? "🏅 오늘 인증 완료" : "오늘 인증 전"}
+                </span>
                 <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-zinc-600 dark:text-zinc-400">
-                  <span>{s.certified ? "🏅 인증" : "인증 -"}</span>
                   <span>⏱️ {s.todayMinutes ? `${s.todayMinutes}분` : "-"}</span>
                   <span>⭐ {s.monthStars || 0}</span>
                   <span className={s.must_change_pw ? "text-rose-600" : ""}>{s.must_change_pw ? "비번 아직" : "비번 ✓"}</span>
