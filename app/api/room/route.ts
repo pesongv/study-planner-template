@@ -1,15 +1,21 @@
 import { requireSession } from "@/lib/auth";
 import { lastActivity, maskName, openSession } from "@/lib/attendance";
-import { readTabs, SHARED_CACHE_MS } from "@/lib/db";
+import { readTabs, readWhere, SHARED_CACHE_MS } from "@/lib/db";
 import { today } from "@/lib/time";
 
 /** 독서실 현황: 자리마다 이름(학생에게는 가림, 선생님에게는 실명), 캐릭터, 앉아 있는지. */
 export async function GET() {
   const s = await requireSession();
   if (s instanceof Response) return s;
-  const { 학생: users, 출석: sessions, 공부기록: logs } = await readTabs(["학생", "출석", "공부기록"], SHARED_CACHE_MS);
   const at = new Date();
-  const lastActive = lastActivity(logs, today(at));
+  const t = today(at);
+  // 오늘 출석·오늘 공부기록만
+  const [{ 학생: users }, sessions, logs] = await Promise.all([
+    readTabs(["학생"], SHARED_CACHE_MS),
+    readWhere("출석", { date: t }, SHARED_CACHE_MS),
+    readWhere("공부기록", { date: t }, SHARED_CACHE_MS),
+  ]);
+  const lastActive = lastActivity(logs, t);
   const seats = users
     .filter((u) => u.role === "student" && u.seat_no)
     .map((u) => ({

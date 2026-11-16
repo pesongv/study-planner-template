@@ -12,7 +12,7 @@ const Week = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 export async function GET(req: Request) {
   const s = await requireSession("student");
   if (s instanceof Response) return s;
-  const { tabs, today, of } = await loadStars();
+  const { tabs, today, of } = await loadStars({ sid: s.sid });
   const q = Week.safeParse(new URL(req.url).searchParams.get("week"));
   const monday = mondayOf(q.success ? q.data : today);
   return Response.json({

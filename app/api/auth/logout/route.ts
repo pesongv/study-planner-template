@@ -1,7 +1,9 @@
 import { cookies } from "next/headers";
-import { COOKIE } from "@/lib/session";
+import { COOKIE, RETURN_COOKIE } from "@/lib/session";
 
 export async function POST() {
-  (await cookies()).delete(COOKIE);
+  const jar = await cookies();
+  jar.delete(COOKIE);
+  jar.delete(RETURN_COOKIE);
   return Response.json({ ok: true });
 }

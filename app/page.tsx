@@ -7,6 +7,7 @@ import { Timer } from "@/components/Timer";
 import { Ranking } from "@/components/Ranking";
 import { TodayCert } from "@/components/TodayCert";
 import { ClassBanner } from "@/components/ClassBanner";
+import { CheerPopup } from "@/components/CheerPopup";
 import { Achievements } from "@/components/Achievements";
 import { api, logout } from "@/lib/client";
 
@@ -22,6 +23,7 @@ export default function RoomPage() {
   const [phase, setPhase] = useState<Phase>("out");
   const [walker, setWalker] = useState<{ x: number; y: number }>();
   const [msg, setMsg] = useState("");
+  const [preview, setPreview] = useState(false); // 선생님이 테스트 계정으로 미리보기 중
   const [certKey, setCertKey] = useState(0); // 타이머가 끝나면 인증 카드 새로고침
   const bumpCert = useCallback(() => setCertKey((k) => k + 1), []);
   const room = useRef<HTMLDivElement>(null);
@@ -42,7 +44,8 @@ export default function RoomPage() {
   );
 
   useEffect(() => {
-    api<{ character: string }>("/api/me").then((me) => {
+    api<{ character: string; preview: boolean }>("/api/me").then((me) => {
+      setPreview(!!me.preview);
       if (me.character === "") location.assign("/character");
     });
     load();
@@ -113,7 +116,16 @@ export default function RoomPage() {
           <button onClick={logout} className="inline-flex min-h-11 items-center text-zinc-500 underline">로그아웃</button>
         </div>
       </header>
+      {preview && (
+        <div className="flex items-center justify-between gap-2 rounded-2xl bg-indigo-600 px-4 py-2 text-sm text-white">
+          <span>🧪 학생 화면 미리보기 중 (테스트 계정)</span>
+          <button onClick={() => api("/api/preview/end", {}).then(() => location.assign("/teacher"))} className="min-h-11 rounded-lg bg-white px-3 font-semibold text-indigo-700">
+            선생님 화면으로
+          </button>
+        </div>
+      )}
       <ClassBanner />
+      {!preview && <CheerPopup />}
 
       {/* 넓은 화면: 왼쪽 독서실 / 오른쪽 타이머. 폰: 위아래 */}
       <div className="grid gap-4 md:grid-cols-2 md:items-start">

@@ -2,12 +2,12 @@
 import "server-only";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { append, readTab, updateRow } from "./db";
+import { append, readWhere, updateRow } from "./db";
 import { latestGoals, type Goal } from "./goals";
 import { now } from "./time";
 
 export async function myGoals(sid: string) {
-  return latestGoals((await readTab("목표")).filter((g) => g.student_id === sid));
+  return latestGoals(await readWhere("목표", { student_id: sid }));
 }
 
 /** 새 목표들 저장 (goal_id 자동). */

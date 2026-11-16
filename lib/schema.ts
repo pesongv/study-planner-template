@@ -9,6 +9,7 @@ export const TABS = {
   퀴즈: ["quiz_id", "student_id", "date", "subject", "question", "answer", "type", "choices_json", "solved_date", "correct"],
   포인트뱃지: ["student_id", "date", "type", "value", "reason"],
   설정: ["key", "value"],
+  쪽지: ["msg_id", "student_id", "text", "created_at", "read_at"],
 } as const;
 
 export type Tab = keyof typeof TABS;

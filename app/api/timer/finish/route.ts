@@ -2,7 +2,7 @@ import { z } from "zod";
 import { requireSession } from "@/lib/auth";
 import { verifyTimer } from "@/lib/session";
 import { myGoals } from "@/lib/goal-store";
-import { append, readTab } from "@/lib/db";
+import { append, readWhere } from "@/lib/db";
 import { METHODS, starsFor, type Method } from "@/lib/study";
 import { now, today } from "@/lib/time";
 
@@ -20,8 +20,7 @@ export async function POST(req: Request) {
   const minutes = Math.min(method.cap, Math.floor((Date.now() - t.start) / 60_000));
   if (minutes < 1) return Response.json({ minutes: 0, stars: 0 });
 
-  const logs = await readTab("공부기록");
-  const existing = logs.find((l) => l.log_id === t.jti);
+  const [existing] = await readWhere("공부기록", { log_id: t.jti }, 0);
   if (existing) return Response.json({ minutes: Number(existing.minutes), stars: starsFor(Number(existing.minutes)), already: true });
 
   const goal = t.goal_id ? (await myGoals(s.sid)).find((g) => g.goal_id === t.goal_id) : undefined;

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { requireSession } from "@/lib/auth";
 import { QUIZ_PER_DAY, type Quiz } from "@/lib/journal";
-import { append, readTab } from "@/lib/db";
+import { append, readWhere } from "@/lib/db";
 import { today } from "@/lib/time";
 
 const view = (q: Quiz, withAnswer: boolean) => ({
@@ -16,7 +16,7 @@ export async function GET() {
   const s = await requireSession("student");
   if (s instanceof Response) return s;
   const t = today();
-  const mine = (await readTab("퀴즈")).filter((q) => q.student_id === s.sid);
+  const mine = await readWhere("퀴즈", { student_id: s.sid });
   return Response.json({
     made: mine.filter((q) => q.date === t).map((q) => view(q, true)),
     toSolve: mine.filter((q) => q.date < t && !q.solved_date).map((q) => view(q, false)),
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
   if (q.type === "choice" && !q.choices.includes(q.answer)) return Response.json({ error: "정답 보기를 골라 주세요." }, { status: 400 });
 
   const t = today();
-  const madeToday = (await readTab("퀴즈")).filter((x) => x.student_id === s.sid && x.date === t).length;
+  const madeToday = (await readWhere("퀴즈", { student_id: s.sid, date: t }, 0)).length;
   if (madeToday >= QUIZ_PER_DAY) return Response.json({ error: `문제는 하루 ${QUIZ_PER_DAY}개까지예요. 내일 또 내 봐요!` }, { status: 400 });
 
   await append("퀴즈", [{

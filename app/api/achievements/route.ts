@@ -6,7 +6,7 @@ import { loadStars } from "@/lib/star-store";
 export async function GET() {
   const s = await requireSession("student");
   if (s instanceof Response) return s;
-  const { tabs, today, of } = await loadStars();
+  const { tabs, today, of } = await loadStars({ sid: s.sid });
   const me = of(s.sid);
   const logs = tabs.공부기록.filter((l) => l.student_id === s.sid);
   const streak = streaks(me.certDays, today);

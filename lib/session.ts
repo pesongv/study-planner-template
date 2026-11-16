@@ -2,6 +2,8 @@
 import { SignJWT, jwtVerify } from "jose";
 
 export const COOKIE = "sp_session";
+/** 선생님이 학생 화면 미리보기 중일 때, 돌아갈 선생님 로그인을 잠시 맡겨 두는 쿠키 */
+export const RETURN_COOKIE = "sp_return";
 const MAX_AGE = 60 * 60 * 24 * 7; // 7일
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 

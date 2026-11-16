@@ -131,3 +131,14 @@ create table if not exists public.settings (
 );
 alter table public.settings enable row level security;
 
+-- 쪽지 (선생님 → 학생 응원 메시지)
+create table if not exists public.messages (
+  id bigint generated always as identity primary key,
+  "msg_id" text not null default '',
+  "student_id" text not null default '',
+  "text" text not null default '',
+  "created_at" text not null default '',
+  "read_at" text not null default ''
+);
+alter table public.messages enable row level security;
+create index if not exists messages_student_id on public.messages ("student_id");

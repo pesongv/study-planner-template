@@ -49,6 +49,12 @@ export default function TeacherPage() {
     load();
   }
 
+  async function startPreview() {
+    const res = await api("/api/teacher/preview", {});
+    if (res.error) return setMsg(res.error);
+    location.assign("/");
+  }
+
   async function reset(s: Student) {
     if (!confirm(`${s.name}(${s.student_id}) 비밀번호를 초기화할까요?`)) return;
     const res = await api<Issued>("/api/teacher/reset-password", { student_id: s.student_id });
@@ -64,6 +70,10 @@ export default function TeacherPage() {
         <h1 className="text-xl font-bold">👩‍🏫 선생님 화면</h1>
         <button onClick={logout} className="text-sm text-zinc-500 underline">로그아웃</button>
       </header>
+
+      <button onClick={startPreview} className="min-h-11 rounded-xl border-2 border-indigo-400 text-sm font-semibold text-indigo-600 print:hidden">
+        🧪 학생 화면 미리보기 (테스트 계정으로 들어가기)
+      </button>
 
       <RoomView />
 

@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { requireSession } from "@/lib/auth";
 import { latestReflection, MOODS } from "@/lib/journal";
-import { append, readTab } from "@/lib/db";
+import { append, readWhere } from "@/lib/db";
 import { now, today } from "@/lib/time";
 
 /** 오늘 내 회고 (없으면 null) */
 export async function GET() {
   const s = await requireSession("student");
   if (s instanceof Response) return s;
-  const r = latestReflection(await readTab("회고"), s.sid, today());
+  const r = latestReflection(await readWhere("회고", { student_id: s.sid, date: today() }), s.sid, today());
   return Response.json(r ? { learned: r.learned, mood: r.mood } : null);
 }
 

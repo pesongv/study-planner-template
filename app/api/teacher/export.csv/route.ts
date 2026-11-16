@@ -4,14 +4,15 @@ import { addDays, lastDayOf, latestGoals } from "@/lib/goals";
 import { starsFor } from "@/lib/study";
 import { latestReflection } from "@/lib/journal";
 import { toCsv } from "@/lib/report";
+import { today as kstToday } from "@/lib/time";
 
 /** 한 달 기록 CSV (학생 × 날짜, 활동 있는 날만). ?month=YYYY-MM (기본: 이번 달) */
 export async function GET(req: Request) {
   const s = await requireSession("teacher");
   if (s instanceof Response) return s;
-  const { tabs, today, of } = await loadStars();
   const q = new URL(req.url).searchParams.get("month");
-  const month = q && /^\d{4}-\d{2}$/.test(q) ? q : today.slice(0, 7);
+  const month = q && /^\d{4}-\d{2}$/.test(q) ? q : kstToday().slice(0, 7);
+  const { tabs, today, of } = await loadStars({ since: month + "-01" }); // 그 달부터의 기록만
   const last = lastDayOf(month) < today ? lastDayOf(month) : today;
   const goals = latestGoals(tabs.목표);
 

@@ -5,6 +5,6 @@ import { loadStars } from "@/lib/star-store";
 export async function GET() {
   const s = await requireSession("student");
   if (s instanceof Response) return s;
-  const { todayMinutes, todayStars, monthStars, totalStars } = (await loadStars()).of(s.sid);
+  const { todayMinutes, todayStars, monthStars, totalStars } = (await loadStars({ sid: s.sid })).of(s.sid);
   return Response.json({ todayMinutes, todayStars, monthStars, totalStars });
 }
