@@ -136,8 +136,8 @@ export default function TeacherPage() {
           <a href="/api/teacher/export.csv" download className="min-h-11 content-center rounded-lg border px-3 text-sm">📥 이번 달 기록 CSV</a>
         </div>
         <p className="text-xs text-zinc-500">이름을 누르면 학생별 자세한 기록을 볼 수 있어요.</p>
-        {/* 폰: 학생마다 카드 / 넓은 화면: 표 */}
-        <ul className="flex flex-col gap-2 md:hidden">
+        {/* 학생마다 카드 (넓은 화면은 2줄씩) */}
+        <ul className="grid gap-2 md:grid-cols-2">
           {students.map((s) => (
             <li key={s.student_id} className="flex items-center gap-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
               <span className="w-8 shrink-0 text-center text-xs text-zinc-500">{s.seat_no}번</span>
@@ -157,29 +157,6 @@ export default function TeacherPage() {
             </li>
           ))}
         </ul>
-        <div className="hidden overflow-x-auto md:block">
-          <table className="w-full text-sm">
-            <thead className="text-left text-zinc-500">
-              <tr><th className="py-2">자리</th><th>학번</th><th>이름</th><th>오늘 인증</th><th>오늘 공부</th><th>이번 달 ⭐</th><th>비밀번호</th><th></th></tr>
-            </thead>
-            <tbody>
-              {students.map((s) => (
-                <tr key={s.student_id} className="border-t">
-                  <td className="py-2">{s.seat_no}</td>
-                  <td>{s.student_id}</td>
-                  <td><Link href={`/teacher/student/${s.student_id}`} className="text-indigo-600 underline">{s.name}</Link></td>
-                  <td>{s.certified ? "🏅" : "-"}</td>
-                  <td>{s.todayMinutes ? `${s.todayMinutes}분` : "-"}</td>
-                  <td>{s.monthStars || "-"}</td>
-                  <td>{s.must_change_pw ? "아직 안 바꿈" : "변경 완료"}</td>
-                  <td className="text-right">
-                    <button onClick={() => reset(s)} className="min-h-11 px-2 text-rose-600 underline">초기화</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </section>
     </main>
   );
