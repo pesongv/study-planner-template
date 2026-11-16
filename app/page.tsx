@@ -108,6 +108,7 @@ export default function RoomPage() {
           <Link href="/plan" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">계획</Link>
           <Link href="/journal" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">한 줄 평·퀴즈</Link>
           <Link href="/report" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">리포트</Link>
+          <Link href="/help" className="inline-flex min-h-11 items-center text-zinc-500 underline">❓도움말</Link>
           <Link href="/character" className="inline-flex min-h-11 items-center text-zinc-500 underline">캐릭터</Link>
           <button onClick={logout} className="inline-flex min-h-11 items-center text-zinc-500 underline">로그아웃</button>
         </div>

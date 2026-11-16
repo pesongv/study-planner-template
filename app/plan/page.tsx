@@ -56,7 +56,10 @@ export default function PlanPage() {
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4 md:max-w-4xl">
       <header className="flex items-center justify-between">
         <h1 className="text-lg font-bold">📅 나의 계획</h1>
-        <Link href="/" className="inline-flex min-h-11 items-center text-sm text-zinc-500 underline">독서실로</Link>
+        <div className="flex gap-3">
+          <Link href="/help" className="inline-flex min-h-11 items-center text-sm text-zinc-500 underline">❓도움말</Link>
+          <Link href="/" className="inline-flex min-h-11 items-center text-sm text-zinc-500 underline">독서실로</Link>
+        </div>
       </header>
 
       <nav className="grid grid-cols-3 gap-1 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-900">

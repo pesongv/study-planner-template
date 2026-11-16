@@ -146,30 +146,43 @@ function DDay({ goals, today, actions }: Props) {
   }
 
   return (
-    <section className="flex flex-wrap items-center gap-2">
-      {ddays.map((g) => {
-        const n = daysBetween(today, g.period_end);
-        return (
-          <span key={g.goal_id} className="flex items-center gap-1 rounded-full bg-rose-100 px-3 py-1 text-sm text-rose-700 dark:bg-rose-950 dark:text-rose-300">
-            <b>{n === 0 ? "D-Day" : `D-${n}`}</b> {g.title}
-            <button onClick={() => actions.patch(g.goal_id, { status: "deleted" })} className="ml-1 text-rose-400" aria-label={`${g.title} D-day 삭제`}>✕</button>
-          </span>
-        );
-      })}
-      {adding ? (
+    <section className="flex flex-col gap-2 rounded-2xl border-2 border-rose-200 bg-rose-50 p-3 dark:border-rose-900 dark:bg-rose-950/40">
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold">🎯 시험 D-day</h2>
+        {!adding && (
+          <button onClick={() => setAdding(true)} className="min-h-11 rounded-lg bg-rose-500 px-3 text-sm font-semibold text-white">+ D-day 등록</button>
+        )}
+      </div>
+      {!ddays.length && !adding && (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">시험 날짜를 등록하면 남은 날을 세어 주고, 시험 범위를 날짜별로 나눌 수 있어요.</p>
+      )}
+      {ddays.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {ddays.map((g) => {
+            const n = daysBetween(today, g.period_end);
+            return (
+              <div key={g.goal_id} className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-sm dark:bg-zinc-900">
+                <b className="text-2xl text-rose-600">{n === 0 ? "D-Day" : `D-${n}`}</b>
+                <span className="text-sm">{g.title}<br /><span className="text-xs text-zinc-500">{g.period_end.slice(5).replace("-", "/")}</span></span>
+                <button onClick={() => actions.patch(g.goal_id, { status: "deleted" })} className="min-h-11 px-1 text-zinc-400" aria-label={`${g.title} D-day 삭제`}>✕</button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {adding && (
         <form onSubmit={add} className="flex w-full flex-col gap-2">
           <div className="flex gap-2">
-            <input name="title" placeholder="시험 이름 (예: 기말고사)" required maxLength={60} className="input" />
-            <input name="date" type="date" min={today} required className="input w-40 shrink-0" />
+            <input name="title" placeholder="시험 이름 (예: 2학기 기말고사)" required maxLength={60} className="input bg-white dark:bg-zinc-900" />
+            <input name="date" type="date" min={today} required aria-label="시험 첫날" className="input w-40 shrink-0 bg-white dark:bg-zinc-900" />
           </div>
+          <p className="text-xs text-zinc-500">시험이 여러 날이면 <b>첫날</b>을 넣어요. 과목별 시험 날은 「월간 → D-day까지 나누기」에서 따로 골라요.</p>
           {error && <p className="text-sm text-rose-600">{error}</p>}
           <div className="flex gap-2">
-            <button className="btn flex-1">D-day 추가</button>
+            <button className="btn flex-1 bg-rose-500">등록하기</button>
             <button type="button" onClick={() => setAdding(false)} className="min-h-11 px-3 text-sm text-zinc-500">취소</button>
           </div>
         </form>
-      ) : (
-        <button onClick={() => setAdding(true)} className="min-h-11 rounded-full border border-dashed px-3 text-sm text-zinc-500">+ D-day</button>
       )}
     </section>
   );
