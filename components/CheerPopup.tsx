@@ -5,7 +5,7 @@ import { api } from "@/lib/client";
 type Msg = { text: string; sent: string; unread: boolean };
 
 /** 💌 응원함 버튼 + 메시지 창. 안 읽은 응원이 있으면 앱을 열 때 자동으로 열림 (autoOpen) */
-export function CheerPopup({ autoOpen = true }: { autoOpen?: boolean }) {
+export function CheerPopup({ autoOpen = true, className = "" }: { autoOpen?: boolean; className?: string }) {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -27,9 +27,9 @@ export function CheerPopup({ autoOpen = true }: { autoOpen?: boolean }) {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="relative inline-flex min-h-11 items-center text-zinc-500 underline" aria-label={`받은 응원${unread ? ` (안 읽음 ${unread}개)` : ""}`}>
-        💌응원함
-        {unread > 0 && <span className="absolute -right-2 top-1.5 size-2.5 rounded-full bg-rose-500" />}
+      <button onClick={() => setOpen(true)} className={className} aria-label={`받은 응원${unread ? ` (안 읽음 ${unread}개)` : ""}`}>
+        <span className="text-lg">💌</span>응원함
+        {unread > 0 && <span className="absolute right-2 top-1.5 size-2.5 rounded-full bg-rose-500" />}
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-label="선생님의 응원 메시지">

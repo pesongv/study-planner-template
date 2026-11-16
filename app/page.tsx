@@ -15,6 +15,7 @@ type Seat = { seat_no: number; name: string; character: string; present: boolean
 type Phase = "out" | "walking-in" | "in" | "walking-out";
 
 const DESKS = 25;
+const NAV = "relative flex min-h-14 flex-col items-center justify-center whitespace-nowrap rounded-xl bg-zinc-100 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200";
 const POLL_MS = 20_000;
 const WALK_MS = 1200;
 
@@ -105,17 +106,22 @@ export default function RoomPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3 p-4 md:max-w-4xl">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-lg font-bold">📚 우리 반 독서실</h1>
-        <div className="flex items-center gap-3 text-sm">
-          <Link href="/plan" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">계획</Link>
-          <Link href="/journal" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">한 줄 평·퀴즈</Link>
-          <Link href="/report" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">리포트</Link>
-          <CheerPopup autoOpen={!preview} />
-          <Link href="/help" className="inline-flex min-h-11 items-center text-zinc-500 underline">❓도움말</Link>
-          <Link href="/character" className="inline-flex min-h-11 items-center text-zinc-500 underline">캐릭터</Link>
-          <button onClick={logout} className="inline-flex min-h-11 items-center text-zinc-500 underline">로그아웃</button>
+      {/* 1줄: 제목 + 도움말·로그아웃 / 2줄: 메뉴 버튼 5개 (폰에서도 글자가 안 깨지게 같은 폭) */}
+      <header className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-lg font-bold">📚 우리 반 독서실</h1>
+          <div className="flex items-center gap-3 text-sm text-zinc-500">
+            <Link href="/help" className="inline-flex min-h-11 items-center whitespace-nowrap underline">❓도움말</Link>
+            <button onClick={logout} className="inline-flex min-h-11 items-center whitespace-nowrap underline">로그아웃</button>
+          </div>
         </div>
+        <nav className="grid grid-cols-5 gap-1.5 md:max-w-xl">
+          <Link href="/plan" className={NAV}><span className="text-lg">📅</span>계획</Link>
+          <Link href="/journal" className={NAV}><span className="text-lg">✍️</span>한줄평</Link>
+          <Link href="/report" className={NAV}><span className="text-lg">📊</span>리포트</Link>
+          <Link href="/character" className={NAV}><span className="text-lg">🐱</span>캐릭터</Link>
+          <CheerPopup autoOpen={!preview} className={NAV} />
+        </nav>
       </header>
       {preview && (
         <div className="flex items-center justify-between gap-2 rounded-2xl bg-indigo-600 px-4 py-2 text-sm text-white">
