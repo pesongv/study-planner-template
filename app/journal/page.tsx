@@ -17,11 +17,11 @@ export default function JournalPage() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4 md:max-w-4xl">
       <header className="flex items-center justify-between">
-        <h1 className="text-lg font-bold">✍️ 회고·퀴즈</h1>
+        <h1 className="text-lg font-bold">✍️ 한 줄 평·퀴즈</h1>
         <Link href="/" className="inline-flex min-h-11 items-center text-sm text-zinc-500 underline">독서실로</Link>
       </header>
 
-      {/* 넓은 화면: 왼쪽 회고·풀기 / 오른쪽 문제 내기·오답노트. 폰: 위아래 */}
+      {/* 넓은 화면: 왼쪽 한 줄 평·풀기 / 오른쪽 문제 내기·오답노트. 폰: 위아래 */}
       <div className="grid gap-5 md:grid-cols-2 md:items-start">
         <div className="flex flex-col gap-5">
           <Reflection />
@@ -61,7 +61,7 @@ function Reflection() {
 
   return (
     <form onSubmit={save} className="flex flex-col gap-2 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800">
-      <h2 className="font-semibold">✍️ 오늘의 한 줄 회고</h2>
+      <h2 className="font-semibold">✍️ 오늘의 한 줄 평</h2>
       <input value={learned} onChange={(e) => { setLearned(e.target.value); setSaved(false); }} maxLength={200}
         placeholder="오늘 배운 것 한 줄 (예: 광합성은 빛으로 양분을 만드는 것)" className="input" />
       <div className="flex items-center gap-2">

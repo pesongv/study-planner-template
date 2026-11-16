@@ -5,7 +5,7 @@ import { latestGoals } from "./goals";
 import { starTotals } from "./journal";
 import { today } from "./time";
 
-export async function loadStars(maxAgeMs = 0) {
+export async function loadStars(maxAgeMs?: number) {
   const tabs = await readTabs(["학생", "목표", "공부기록", "회고", "퀴즈", "출석", "설정"], maxAgeMs);
   const t = today();
   const goals = latestGoals(tabs.목표);

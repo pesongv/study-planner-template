@@ -9,7 +9,7 @@ import { starsFor, summarize } from "../lib/study.ts";
 import { certify, isCorrect, latestReflection, starTotals } from "../lib/journal.ts";
 import { badgesFor, bestWeek, latestSettings, streaks, weekCompare } from "../lib/achieve.ts";
 import { toCsv, weekReport, weekReviewOf } from "../lib/report.ts";
-import { addDays, mondayOf, lastDayOf, weeksOfMonth, monthOfWeek, latestGoals, progress, splitMonth, splitRanges, rangeLabel, todayShare, type Goal } from "../lib/goals.ts";
+import { addDays, mondayOf, lastDayOf, weeksOfMonth, monthOfWeek, latestGoals, progress, splitMonth, splitRanges, rangeLabel, rangesSummary, parseRanges, todayShare, weekTitle, type Goal } from "../lib/goals.ts";
 
 // 캐릭터: 16x16, 아는 색만 사용, id 중복 없음, 8종 이상
 assert.ok(CHARACTERS.length >= 8);
@@ -57,7 +57,7 @@ assert.equal(monthOfWeek("2026-11-30"), "2026-12");
 
 const g = (o: Partial<Goal>): Goal => ({
   goal_id: "x", student_id: "1", level: "day", parent_id: "", period_start: "", period_end: "", title: "", subject: "",
-  target_amount: "", unit: "", done_amount: "", status: "todo", updated_at: "", ...o,
+  target_amount: "", unit: "", done_amount: "", status: "todo", updated_at: "", ranges_json: "", ...o,
 });
 assert.deepEqual(latestGoals([g({ goal_id: "a", title: "1" }), g({ goal_id: "a", title: "2" }), g({ goal_id: "b", status: "deleted" })]).map((x) => x.title), ["2"]);
 const m = g({ goal_id: "m", level: "month" });
@@ -72,28 +72,34 @@ assert.equal(progress(w2, all), 0.5); // 5/10
 assert.equal(progress(m, all), 0.5);
 const split = splitMonth(g({ goal_id: "m", level: "month", period_start: "2026-11-01", title: "수학 문제집", target_amount: "10", unit: "쪽" }));
 assert.deepEqual(split.map((s) => s.target_amount), ["3", "3", "2", "2"]);
-assert.equal(split[0].title, "수학 문제집 (1주차)");
+assert.equal(split[0].title, "수학 문제집 (11월 1주차)");
+assert.equal(weekTitle("과학", "2026-11-30"), "과학 (12월 1주차)");
 
 // 범위 → 날짜별 분배 (2026-11-16 월요일부터, 시험 11-23 월요일)
 const base = { from: "2026-11-16", examDate: "2026-11-23", restDays: [] as number[], reviewDays: 0 };
-let parts = splitRanges({ ...base, ranges: [[30, 50]] }); // 21쪽 / 7일(16~22)
+const R = (start: number, end: number, name = "교과서", unit = "쪽") => ({ name, start, end, unit });
+let parts = splitRanges({ ...base, ranges: [R(30, 50)] }); // 21쪽 / 7일(16~22)
 assert.equal(parts.length, 7);
-assert.deepEqual(parts[0], { date: "2026-11-16", count: 3, ranges: [[30, 32]] });
-assert.deepEqual(parts.at(-1)!.ranges, [[48, 50]]); assert.equal(parts.at(-1)!.date, "2026-11-22");
-parts = splitRanges({ ...base, ranges: [[1, 20]], restDays: [0, 6], reviewDays: 1 }); // 주말 빼고, 22일(일)은 원래 쉼 → 16~20 (5일)
+assert.deepEqual(parts[0], { date: "2026-11-16", count: 3, segs: [{ i: 0, s: 30, e: 32 }] });
+assert.deepEqual(parts.at(-1)!.segs, [{ i: 0, s: 48, e: 50 }]); assert.equal(parts.at(-1)!.date, "2026-11-22");
+parts = splitRanges({ ...base, ranges: [R(1, 20)], restDays: [0, 6], reviewDays: 1 }); // 주말 빼고, 22일(일)은 원래 쉼 → 16~20 (5일)
 assert.deepEqual(parts.map((p) => p.date), ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"]);
 assert.deepEqual(parts.map((p) => p.count), [4, 4, 4, 4, 4]);
-parts = splitRanges({ ...base, ranges: [[1, 3]] }); // 분량 < 날 → 앞 3일만
-assert.deepEqual(parts.map((p) => p.ranges), [[[1, 1]], [[2, 2]], [[3, 3]]]);
-assert.deepEqual(splitRanges({ ...base, examDate: "2026-11-16", ranges: [[1, 10]] }), [], "시험이 오늘이면 나눌 날 없음");
-// 여러 범위: 13~20(8쪽) + 30~40(11쪽) = 19쪽 / 7일 → 3,3,3,3,3,2,2. 셋째 날이 두 범위에 걸침
-parts = splitRanges({ ...base, ranges: [[13, 20], [30, 40]] });
-assert.deepEqual(parts.map((p) => p.count), [3, 3, 3, 3, 3, 2, 2]);
-assert.deepEqual(parts[2].ranges, [[19, 20], [30, 30]]);
-assert.deepEqual(parts.at(-1)!.ranges, [[39, 40]]);
-assert.equal(rangeLabel([[30, 33]], "쪽"), "30~33쪽");
-assert.equal(rangeLabel([[5, 5]], "쪽"), "5쪽");
-assert.equal(rangeLabel([[19, 20], [30, 30]], "쪽"), "19~20, 30쪽");
+parts = splitRanges({ ...base, ranges: [R(1, 3)] }); // 분량 < 날 → 앞 3일만
+assert.equal(parts.length, 3);
+assert.deepEqual(splitRanges({ ...base, examDate: "2026-11-16", ranges: [R(1, 10)] }), [], "시험이 오늘이면 나눌 날 없음");
+// 여러 범위 + 유인물: 교과서 13~20(8) + 30~40(11) + 유인물 1~5장(5) = 24 / 7일 → 4,4,4,3,3,3,3
+const items = [R(13, 20), R(30, 40), R(1, 5, "유인물", "장")];
+parts = splitRanges({ ...base, ranges: items });
+assert.deepEqual(parts.map((p) => p.count), [4, 4, 4, 3, 3, 3, 3]);
+assert.equal(rangeLabel(parts[0].segs, items), "교과서 13~16쪽");
+assert.equal(rangeLabel(parts[1].segs, items), "교과서 17~20쪽");
+assert.equal(rangeLabel(parts[5].segs, items), "교과서 40쪽, 유인물 1~2장");
+assert.equal(rangeLabel(parts.at(-1)!.segs, items), "유인물 3~5장");
+assert.equal(rangeLabel([{ i: 0, s: 19, e: 20 }, { i: 1, s: 30, e: 30 }], items), "교과서 19~20, 30쪽", "같은 이름은 묶음");
+assert.equal(rangesSummary(items), "교과서 13~20, 30~40쪽, 유인물 1~5장");
+assert.equal(rangeLabel([{ i: 0, s: 5, e: 5 }], [R(1, 9, "기타")]), "5쪽", "기타는 이름 생략");
+assert.deepEqual(parseRanges("not json"), []);
 
 // 주간 목표 → 오늘 몫: 13쪽, 3쪽 끝냄, 오늘(11/13 금)~11/15(일) 3일 → ceil(10/3)=4
 const wk = g({ goal_id: "w", level: "week", period_end: "2026-11-15", target_amount: "13" });

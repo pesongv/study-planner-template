@@ -76,7 +76,7 @@ function StudentDetail() {
                 {d.todayGoals.map((g, i) => <p key={i} className="text-sm">{g.done ? "✅" : "⬜"} {g.title}</p>)}
               </section>
               <section className="flex flex-col gap-1 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800">
-                <h2 className="font-semibold">최근 회고</h2>
+                <h2 className="font-semibold">최근 한 줄 평</h2>
                 {!d.reflections.length && <p className="text-sm text-zinc-500">없음</p>}
                 {d.reflections.map((r, i) => <p key={i} className="text-sm"><span className="text-zinc-500">{short(r.date)}</span> {r.mood} {r.learned}</p>)}
               </section>

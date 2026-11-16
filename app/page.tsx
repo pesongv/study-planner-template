@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Character } from "@/components/Character";
+import { Desk } from "@/components/Desk";
 import { Timer } from "@/components/Timer";
 import { Ranking } from "@/components/Ranking";
 import { TodayCert } from "@/components/TodayCert";
@@ -105,7 +106,7 @@ export default function RoomPage() {
         <h1 className="text-lg font-bold">📚 우리 반 독서실</h1>
         <div className="flex items-center gap-3 text-sm">
           <Link href="/plan" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">계획</Link>
-          <Link href="/journal" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">회고·퀴즈</Link>
+          <Link href="/journal" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">한 줄 평·퀴즈</Link>
           <Link href="/report" className="inline-flex min-h-11 items-center font-semibold text-indigo-600 underline">리포트</Link>
           <Link href="/character" className="inline-flex min-h-11 items-center text-zinc-500 underline">캐릭터</Link>
           <button onClick={logout} className="inline-flex min-h-11 items-center text-zinc-500 underline">로그아웃</button>
@@ -119,23 +120,13 @@ export default function RoomPage() {
           <p className="text-sm text-zinc-500">지금 {presentCount}명이 공부하고 있어요</p>
 
           <div ref={room} className="relative rounded-2xl bg-amber-50 p-3 dark:bg-stone-900">
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-x-2 gap-y-1">
               {Array.from({ length: deskCount }, (_, i) => i + 1).map((no) => {
                 const s = bySeat.get(no);
                 const seated = s && (s.me ? phase === "in" : s.present);
                 return (
-                  <div key={no} ref={s?.me ? myDesk : undefined} className="flex flex-col items-center">
-                    <div className="flex h-8 items-end">{seated && <Character id={s.character} size={32} />}</div>
-                    <div
-                      className={`flex h-6 w-full items-center justify-center rounded bg-amber-700/80 text-[10px] text-amber-50 ${
-                        s?.me ? "ring-2 ring-indigo-500" : ""
-                      }`}
-                    >
-                      {no}
-                    </div>
-                    <span className={`mt-0.5 h-4 truncate text-[10px] ${s?.me ? "font-bold text-indigo-600" : "text-zinc-500"}`}>
-                      {s?.name ?? ""}
-                    </span>
+                  <div key={no} ref={s?.me ? myDesk : undefined}>
+                    <Desk no={no} name={s?.name} character={s?.character} seated={!!seated} me={!!s?.me} />
                   </div>
                 );
               })}

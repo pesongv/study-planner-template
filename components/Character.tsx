@@ -8,10 +8,10 @@ export function Character({ id, size = 32, className = "" }: { id: string; size?
   const px = Math.max(1, Math.round(size / n)) * n;
   if (!c.art) {
     // eslint-disable-next-line @next/next/no-img-element -- 32px 도트 그림은 최적화가 필요 없고, 픽셀이 뭉개지지 않게 그대로 확대
-    return <img src={c.src} alt={c.name} width={px} height={px} className={`pixel-char [image-rendering:pixelated] ${className}`} />;
+    return <img src={c.src} alt={c.name} width={px} height={px} className={`pixel-char max-w-none [image-rendering:pixelated] ${className}`} />;
   }
   return (
-    <svg viewBox={`0 0 ${n} ${n}`} width={px} height={px} shapeRendering="crispEdges" className={`pixel-char ${className}`} role="img" aria-label={c.name}>
+    <svg viewBox={`0 0 ${n} ${n}`} width={px} height={px} shapeRendering="crispEdges" className={`pixel-char max-w-none ${className}`} role="img" aria-label={c.name}>
       {runs(c).map(([x, y, w, fill]) => (
         <rect key={`${x}-${y}`} x={x} y={y} width={w} height={1} fill={fill} />
       ))}

@@ -17,5 +17,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|characters|icon|apple-icon|manifest.webmanifest).*)"], // 아이콘·매니페스트는 로그인 없이
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|characters|icon|apple-icon|manifest.webmanifest|opengraph-image).*)"], // 아이콘·매니페스트는 로그인 없이
 };

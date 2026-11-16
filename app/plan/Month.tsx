@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import { addDays, lastDayOf, monthOf, progress, weekday, weeksOfMonth, type Goal } from "@/lib/goals";
+import { addDays, lastDayOf, monthOf, parseRanges, progress, rangesSummary, weekday, weeksOfMonth, type Goal } from "@/lib/goals";
 import { api } from "@/lib/client";
-import { Bar, EditButton, EditGoal, GoalForm, SubjectChip, amountLabel, type Actions } from "./ui";
+import { Bar, EditButton, EditGoal, SubjectChip, amountLabel, type Actions, type NewGoal } from "./ui";
+import { RangeRows, emptyRow, toItems, type RangeRow } from "./RangeRows";
 import { SplitDday } from "./SplitDday";
 
 const shiftMonth = (ym: string, n: number) => {
@@ -62,11 +63,14 @@ export function Month({ goals, today, actions, reload }: { goals: Goal[]; today:
           {monthGoals.map((g) => {
             const kids = goals.filter((c) => c.parent_id === g.goal_id);
             const hasWeeks = kids.some((c) => c.level === "week");
+            const hasDays = goals.some((d) => d.level === "day" && (d.parent_id === g.goal_id || kids.some((k) => k.goal_id === d.parent_id)));
             if (editing === g.goal_id) return <EditGoal key={g.goal_id} goal={g} actions={actions} onDone={() => setEditing("")} />;
             return (
               <div key={g.goal_id} className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="flex-1 text-sm">{g.title} <span className="text-xs text-zinc-500">{amountLabel(g)}</span></span>
+                  <span className="flex-1 text-sm">
+                    {g.title} <span className="text-xs text-zinc-500">{parseRanges(g.ranges_json).length ? rangesSummary(parseRanges(g.ranges_json)) : amountLabel(g)}</span>
+                  </span>
                   <SubjectChip subject={g.subject} />
                   <EditButton onClick={() => setEditing(g.goal_id)} />
                   <button onClick={() => actions.patch(g.goal_id, { status: "deleted" })} className="min-h-11 px-1 text-zinc-400" aria-label="삭제">✕</button>
@@ -74,12 +78,12 @@ export function Month({ goals, today, actions, reload }: { goals: Goal[]; today:
                 <Bar value={progress(g, goals)} />
                 {splitting === g.goal_id ? (
                   <SplitDday goal={g} goals={goals} today={today} onDone={(m) => { setSplitting(""); setMsg(m); if (m) reload(); }} />
-                ) : !hasWeeks && (
+                ) : (
                   <div className="flex flex-wrap gap-2">
                     <button onClick={() => setSplitting(g.goal_id)} className="min-h-11 rounded-lg border border-indigo-400 px-3 text-sm text-indigo-600">
-                      📖 {kids.length ? "D-day까지 다시 나누기" : "D-day까지 나누기"}
+                      📖 {hasDays ? "D-day까지 다시 나누기" : "D-day까지 나누기"}
                     </button>
-                    {!kids.length && (
+                    {!hasWeeks && !hasDays && (
                       <button onClick={() => split(g.goal_id)} className="min-h-11 rounded-lg border px-3 text-sm">이번 달 {nWeeks}주로 나누기</button>
                     )}
                   </div>
@@ -93,11 +97,48 @@ export function Month({ goals, today, actions, reload }: { goals: Goal[]; today:
 
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">월 목표 추가</h2>
-        <GoalForm
-          placeholder="이번 달 목표 (예: 수학 문제집 1권 끝내기)"
-          onSubmit={(f) => actions.create({ ...f, level: "month", period_start: first, period_end: last })}
-        />
+        <MonthForm onSubmit={(g) => actions.create({ ...g, level: "month", period_start: first, period_end: last })} />
       </section>
     </div>
+  );
+}
+
+/** 월 목표 추가: 제목·과목 + 시험 범위 여러 줄 (범위는 안 써도 됨) */
+function MonthForm({ onSubmit }: { onSubmit: (g: Omit<NewGoal, "level" | "period_start" | "period_end">) => Promise<string | undefined> }) {
+  const [title, setTitle] = useState("");
+  const [subject, setSubject] = useState("");
+  const [rows, setRows] = useState<RangeRow[]>([emptyRow()]);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const items = toItems(rows);
+    const units = [...new Set(items.map((r) => r.unit))];
+    const total = items.reduce((n, r) => n + Math.max(0, r.end - r.start + 1), 0);
+    setBusy(true);
+    const err = await onSubmit({
+      title, subject,
+      target_amount: total ? String(total) : "",
+      unit: units.length === 1 ? units[0] : "",
+      ranges_json: items.length ? JSON.stringify(items) : "",
+    });
+    setBusy(false);
+    setError(err ?? "");
+    if (err) return;
+    setTitle("");
+    setSubject("");
+    setRows([emptyRow()]);
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-2 rounded-xl border border-dashed border-zinc-300 p-3 dark:border-zinc-700">
+      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="이번 달 목표 (예: 수학 기말고사 범위)" required maxLength={60} className="input" />
+      <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="과목 (예: 수학)" list="subjects" maxLength={20} className="input" />
+      <span className="text-sm text-zinc-500">시험 범위 <span className="text-xs">(안 써도 돼요 · 유인물은 1~5장처럼)</span></span>
+      <RangeRows rows={rows} setRows={setRows} />
+      {error && <p className="text-sm text-rose-600">{error}</p>}
+      <button disabled={busy} className="btn">{busy ? "저장 중…" : "추가"}</button>
+    </form>
   );
 }

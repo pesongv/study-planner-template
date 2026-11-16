@@ -1,5 +1,6 @@
 import { requireSession } from "@/lib/auth";
 import { createGoals, GoalFields, myGoals } from "@/lib/goal-store";
+import { splitMonth, type Goal } from "@/lib/goals";
 
 /** 내 목표 전체 (학생 한 명 분량이라 작음 — 화면에서 기간별로 거름). */
 export async function GET() {
@@ -21,5 +22,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "연결할 상위 목표를 찾을 수 없어요." }, { status: 400 });
   }
   const [created] = await createGoals(s.sid, [goal]);
+  // 월 목표를 만들면 주간 목표도 같이 (월 → 주 → 하루가 항상 이어지게)
+  if (created.level === "month") await createGoals(s.sid, splitMonth(created as Goal));
   return Response.json(created);
 }

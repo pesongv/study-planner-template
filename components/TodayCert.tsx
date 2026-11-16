@@ -8,7 +8,7 @@ type Status = { todo: boolean; timer: boolean; reflection: boolean; quiz: boolea
 const ITEMS: [keyof Status, string, string][] = [
   ["todo", "할 일 체크", "/plan"],
   ["timer", "타이머 25분", ""],
-  ["reflection", "한 줄 회고", "/journal"],
+  ["reflection", "한 줄 평", "/journal"],
   ["quiz", "퀴즈", "/journal"],
 ];
 

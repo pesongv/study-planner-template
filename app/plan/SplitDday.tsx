@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { splitRanges, type Goal, type Range } from "@/lib/goals";
+import { parseRanges, splitRanges, type Goal } from "@/lib/goals";
+import { RangeRows, toItems, toRows, type RangeRow } from "./RangeRows";
 import { api } from "@/lib/client";
 import { short } from "./ui";
 
@@ -9,21 +10,26 @@ const DOW = ["일", "월", "화", "수", "목", "금", "토"];
 /** 시험 범위를 D-day(과목별 시험 날) 전날까지 하루 할 일로 나누는 폼 */
 export function SplitDday({ goal, goals, today, onDone }: { goal: Goal; goals: Goal[]; today: string; onDone: (msg: string) => void }) {
   const firstDday = goals.filter((g) => g.level === "dday" && g.period_end > today).sort((a, b) => a.period_end.localeCompare(b.period_end))[0];
-  const [rows, setRows] = useState<[string, string][]>([["1", goal.target_amount]]); // 입력 중이라 문자열
+  // 월 목표에 저장된 범위가 있으면 그대로, 없으면 1~목표량
+  const [rows, setRows] = useState<RangeRow[]>(() => {
+    const saved = parseRanges(goal.ranges_json);
+    return saved.length ? toRows(saved) : [{ name: "교과서", start: "1", end: goal.target_amount, unit: goal.unit || "쪽" }];
+  });
   const [exam, setExam] = useState(firstDday?.period_end ?? "");
   const [rest, setRest] = useState<number[]>([]);
   const [review, setReview] = useState(0);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const unit = goal.unit || "쪽";
 
-  const ranges: Range[] = rows.filter(([a, b]) => a && b).map(([a, b]) => [Number(a), Number(b)]);
+
+  const ranges = toItems(rows);
+  const units = [...new Set(ranges.map((r) => r.unit))];
+  const unit = units.length > 1 ? "(쪽·장)" : units[0] ?? "쪽";
   const parts = exam && ranges.length
     ? splitRanges({ ranges, from: today, examDate: exam, restDays: rest, reviewDays: review })
     : [];
   const total = parts.reduce((sum, p) => sum + p.count, 0);
   const perDay = parts.length ? Math.ceil(total / parts.length) : 0;
-  const setRow = (i: number, j: 0 | 1, v: string) => setRows(rows.map((r, k) => (k === i ? (j ? [r[0], v] : [v, r[1]]) : r)));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,22 +44,9 @@ export function SplitDday({ goal, goals, today, onDone }: { goal: Goal; goals: G
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-3 rounded-xl border-2 border-indigo-300 p-3 text-sm dark:border-indigo-800">
-      <div className="flex flex-col gap-2">
-        <span className="text-zinc-500">시험 범위 <span className="text-xs">(여러 군데면 + 눌러서 추가)</span></span>
-        {rows.map(([a, b], i) => (
-          <div key={i} className="flex items-center gap-2">
-            <input type="number" min={0} value={a} onChange={(e) => setRow(i, 0, e.target.value)} required className="input" aria-label={`범위 ${i + 1} 시작`} />
-            <span>~</span>
-            <input type="number" min={0} value={b} onChange={(e) => setRow(i, 1, e.target.value)} required className="input" aria-label={`범위 ${i + 1} 끝`} />
-            <span className="shrink-0">{unit}</span>
-            {rows.length > 1 && (
-              <button type="button" onClick={() => setRows(rows.filter((_, k) => k !== i))} className="min-h-11 px-1 text-zinc-400" aria-label={`범위 ${i + 1} 빼기`}>✕</button>
-            )}
-          </div>
-        ))}
-        {rows.length < 10 && (
-          <button type="button" onClick={() => setRows([...rows, ["", ""]])} className="min-h-11 rounded-lg border border-dashed text-zinc-500">+ 범위 추가</button>
-        )}
+      <div className="flex flex-col gap-1">
+        <span className="text-zinc-500">시험 범위 <span className="text-xs">(유인물은 1~5장처럼)</span></span>
+        <RangeRows rows={rows} setRows={setRows} />
       </div>
 
       <label className="flex items-center gap-2">

@@ -13,7 +13,7 @@ export async function myGoals(sid: string) {
 /** 새 목표들 저장 (goal_id 자동). */
 export async function createGoals(sid: string, goals: Partial<Goal>[]) {
   const rows = goals.map((g) => ({
-    target_amount: "", unit: "", done_amount: "", parent_id: "", subject: "", status: "todo",
+    target_amount: "", unit: "", done_amount: "", parent_id: "", subject: "", status: "todo", ranges_json: "",
     ...g, goal_id: randomUUID().slice(0, 8), student_id: sid, updated_at: now(),
   }));
   await append("목표", rows);
@@ -40,6 +40,21 @@ const editable = {
   status: z.enum(["todo", "doing", "done", "deleted"]),
 };
 
+export const RangeItemSchema = z.object({
+  name: z.string().trim().max(10),
+  start: z.number().int().min(0).max(9999),
+  end: z.number().int().min(0).max(9999),
+  unit: z.string().trim().min(1).max(5),
+}).refine((r) => r.end >= r.start, "끝이 시작보다 작은 범위가 있어요.");
+const RangesJson = z.string().max(2000).refine((s) => {
+  if (!s) return true;
+  try {
+    return z.array(RangeItemSchema).max(10).safeParse(JSON.parse(s)).success;
+  } catch {
+    return false;
+  }
+}, "범위를 확인해 주세요.");
+
 /** 새 목표 (빠진 칸은 기본값) */
 export const GoalFields = z.object({
   ...editable,
@@ -50,6 +65,7 @@ export const GoalFields = z.object({
   unit: editable.unit.default(""),
   done_amount: editable.done_amount.default(""),
   status: editable.status.default("todo"),
+  ranges_json: RangesJson.default(""),
 });
 
 /** 수정: 보낸 칸만 (기본값 없음 — 안 보낸 칸은 그대로 둠) */

@@ -100,6 +100,7 @@ TEACHER_INIT_PASSWORD=         # 최초 교사 계정 생성용 (생성 후 제�
 | done_amount | 달성량 |
 | status | `todo` / `doing` / `done` / `deleted`(삭제) |
 | updated_at | 최종 수정일시 |
+| ranges_json | 월 목표의 시험 범위 `[{"name":"교과서","start":13,"end":20,"unit":"쪽"},{"name":"유인물","start":1,"end":5,"unit":"장"}]` (유인물 1장 = 1쪽 분량) |
 
 > 시트에서는 append + "최신 updated_at 우선"으로 읽는다. (같은 goal_id의 가장 마지막 줄이 현재 상태)
 

@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   const last = lastDayOf(month) < today ? lastDayOf(month) : today;
   const goals = latestGoals(tabs.목표);
 
-  const rows: (string | number)[][] = [["날짜", "학번", "이름", "출석", "공부(분)", "타이머 별", "할 일(완료/전체)", "오늘 인증", "한 줄 회고", "기분"]];
+  const rows: (string | number)[][] = [["날짜", "학번", "이름", "출석", "공부(분)", "타이머 별", "할 일(완료/전체)", "오늘 인증", "한 줄 평", "기분"]];
   for (const u of tabs.학생.filter((x) => x.role === "student")) {
     const id = u.student_id;
     const certDays = new Set(of(id).certDays);

@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { RoomView } from "@/components/RoomView";
 import { api, logout } from "@/lib/client";
 
 type Student = { student_id: string; name: string; seat_no: string; must_change_pw: boolean; todayMinutes: number; monthStars: number; totalStars: number; certified: boolean };
@@ -63,6 +64,8 @@ export default function TeacherPage() {
         <h1 className="text-xl font-bold">👩‍🏫 선생님 화면</h1>
         <button onClick={logout} className="text-sm text-zinc-500 underline">로그아웃</button>
       </header>
+
+      <RoomView />
 
       <ClassSettings />
 

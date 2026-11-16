@@ -3,7 +3,7 @@ import { lastActivity, maskName, openSession } from "@/lib/attendance";
 import { readTabs, SHARED_CACHE_MS } from "@/lib/sheets";
 import { today } from "@/lib/time";
 
-/** 독서실 현황: 자리마다 가린 이름, 캐릭터, 앉아 있는지. */
+/** 독서실 현황: 자리마다 이름(학생에게는 가림, 선생님에게는 실명), 캐릭터, 앉아 있는지. */
 export async function GET() {
   const s = await requireSession();
   if (s instanceof Response) return s;
@@ -14,7 +14,7 @@ export async function GET() {
     .filter((u) => u.role === "student" && u.seat_no)
     .map((u) => ({
       seat_no: Number(u.seat_no),
-      name: u.student_id === s.sid ? u.name : maskName(u.name),
+      name: u.student_id === s.sid || s.role === "teacher" ? u.name : maskName(u.name), // 선생님은 실명
       character: u.character,
       present: !!openSession(sessions, u.student_id, at, lastActive.get(u.student_id)),
       me: u.student_id === s.sid,
