@@ -1,5 +1,5 @@
 import { requireSession } from "@/lib/auth";
-import { maskName } from "@/lib/attendance";
+import { isTestAccount, maskName } from "@/lib/attendance";
 import { loadStars } from "@/lib/star-store";
 import { SHARED_CACHE_MS } from "@/lib/db";
 import { today } from "@/lib/time";
@@ -13,7 +13,7 @@ export async function GET() {
   const { tabs, of } = await loadStars({ since: today().slice(0, 7) + "-01", maxAgeMs: SHARED_CACHE_MS }); // 이번 달 기록만
   const top = tabs.학생
     .filter((u) => u.role === "student")
-    .map((u) => ({ id: u.student_id, name: maskName(u.name), stars: of(u.student_id).monthStars }))
+    .map((u) => ({ id: u.student_id, name: isTestAccount(u) ? u.name : maskName(u.name), stars: of(u.student_id).monthStars }))
     .filter((r) => r.stars > 0)
     .sort((a, b) => b.stars - a.stars)
     .slice(0, TOP)

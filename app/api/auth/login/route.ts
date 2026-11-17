@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { findUser, hash, setSession, verifyPw } from "@/lib/auth";
 import { now } from "@/lib/time";
-import { append, ensureTabs } from "@/lib/db";
+import { append, ensureTabs, readTab } from "@/lib/db";
 
 const Body = z.object({ student_id: z.string().trim().min(1).max(20), password: z.string().min(1).max(100) });
 
@@ -26,7 +26,8 @@ export async function POST(req: Request) {
   if (firstSetup) await ensureTabs();
 
   let found = await findUser(id);
-  if (!found && firstSetup) {
+  // 선생님 아이디를 바꾼 뒤에도 teacher로 두 번째 교사 계정이 생기지 않게: 교사가 하나도 없을 때만
+  if (!found && firstSetup && !(await readTab("학생", 0)).some((u) => u.role === "teacher")) {
     await append("학생", [{
       student_id: "teacher", name: "선생님", role: "teacher", password_hash: await hash(password),
       must_change_pw: "TRUE", created_at: now(),

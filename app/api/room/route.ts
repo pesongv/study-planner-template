@@ -1,5 +1,5 @@
 import { requireSession } from "@/lib/auth";
-import { lastActivity, maskName, openSession } from "@/lib/attendance";
+import { isTestAccount, lastActivity, maskName, openSession } from "@/lib/attendance";
 import { readTabs, readWhere, SHARED_CACHE_MS } from "@/lib/db";
 import { today } from "@/lib/time";
 
@@ -20,7 +20,7 @@ export async function GET() {
     .filter((u) => u.role === "student" && u.seat_no)
     .map((u) => ({
       seat_no: Number(u.seat_no),
-      name: u.student_id === s.sid || s.role === "teacher" ? u.name : maskName(u.name), // 선생님은 실명
+      name: u.student_id === s.sid || s.role === "teacher" || isTestAccount(u) ? u.name : maskName(u.name), // 선생님은 실명
       character: u.character,
       present: !!openSession(sessions, u.student_id, at, lastActive.get(u.student_id)),
       me: u.student_id === s.sid,

@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { CHARACTERS, pixels, runs } from "../lib/characters.ts";
-import { maskName, openSession, AUTO_CHECKOUT_MS } from "../lib/attendance.ts";
+import { isTestAccount, maskName, openSession, AUTO_CHECKOUT_MS } from "../lib/attendance.ts";
 import { now, today } from "../lib/time.ts";
 import type { Row } from "../lib/schema.ts";
 import { starsFor, summarize } from "../lib/study.ts";
@@ -30,6 +30,7 @@ assert.equal(maskName("홍길동"), "홍*동");
 assert.equal(maskName("김철"), "김*");
 assert.equal(maskName("남궁민수"), "남**수");
 assert.equal(maskName("이"), "이");
+assert.ok(isTestAccount({ student_id: "99999", name: "담임샘" }) && isTestAccount({ student_id: "1", name: "테스트" }) && !isTestAccount({ student_id: "10101", name: "홍길동" }));
 
 // 출석 세션
 const at = new Date("2026-11-15T05:00:00Z"); // KST 14:00

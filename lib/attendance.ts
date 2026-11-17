@@ -25,6 +25,11 @@ export function lastActivity(logs: Row<"공부기록">[], day: string) {
 }
 
 /** 이름표용 가림: 홍길동 → 홍*동, 김철 → 김*, 남궁민수 → 남**수 */
+/** 테스트 계정: 학번 99999 또는 이름에 '테스트' (선생님 미리보기용, 이름을 가리지 않음) */
+export function isTestAccount(u: { student_id: string; name: string }) {
+  return u.student_id === "99999" || u.name.includes("테스트");
+}
+
 export function maskName(name: string) {
   const n = [...name];
   if (n.length <= 1) return name;
