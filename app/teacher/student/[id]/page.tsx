@@ -22,7 +22,7 @@ type Detail = {
     ddays: { title: string; date: string }[];
   };
   quizzes: { date: string; subject: string; question: string; answer: string; type: string; result: string }[];
-  messages: { text: string; sent: string; read: boolean }[];
+  messages: { text: string; sent: string; read: boolean; reaction: string }[];
 };
 const short = (d: string) => `${Number(d.slice(5, 7))}/${Number(d.slice(8))}`;
 
@@ -179,7 +179,7 @@ function SendCheer({ id, name, sent, onSent }: { id: string; name: string; sent:
       {sent.length > 0 && (
         <ul className="flex flex-col gap-1 text-sm">
           {sent.slice(0, 5).map((m, i) => (
-            <li key={i}><span className="text-zinc-500">{m.sent.slice(5, 16).replace("-", "/")}</span> {m.text} <span className="text-xs text-zinc-500">{m.read ? "✓ 읽음" : "안 읽음"}</span></li>
+            <li key={i}><span className="text-zinc-500">{m.sent.slice(5, 16).replace("-", "/")}</span> {m.text} <span className="text-xs text-zinc-500">{m.read ? "✓ 읽음" : "안 읽음"}</span>{m.reaction && <span className="ml-1 rounded-full bg-rose-100 px-2 py-0.5 text-xs text-rose-700 dark:bg-rose-900 dark:text-rose-100">{m.reaction}</span>}</li>
           ))}
         </ul>
       )}

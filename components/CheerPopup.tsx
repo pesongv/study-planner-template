@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client";
+import { REACTIONS } from "@/lib/reactions";
 
-type Msg = { text: string; sent: string; unread: boolean };
+type Msg = { id: string; text: string; sent: string; unread: boolean; reaction: string };
 
 /** 💌 응원함 버튼 + 메시지 창. 안 읽은 응원이 있으면 앱을 열 때 자동으로 열림 (autoOpen) */
 export function CheerPopup({ autoOpen = true, className = "" }: { autoOpen?: boolean; className?: string }) {
@@ -24,6 +25,11 @@ export function CheerPopup({ autoOpen = true, className = "" }: { autoOpen?: boo
     setMsgs(msgs.map((m) => ({ ...m, unread: false })));
     await api("/api/messages", {});
   }
+  async function react(m: Msg, r: string) {
+    const reaction = m.reaction === r ? "" : r;
+    setMsgs(msgs.map((x) => (x === m ? { ...x, reaction } : x)));
+    await api("/api/messages", { id: m.id, reaction });
+  }
 
   return (
     <>
@@ -42,6 +48,14 @@ export function CheerPopup({ autoOpen = true, className = "" }: { autoOpen?: boo
                   {m.unread && <span className="mr-1 text-xs font-bold text-rose-500">NEW</span>}
                   {m.text}
                   <div className="mt-1 text-right text-[11px] opacity-60">{m.sent.slice(5, 16).replace("-", "/")}</div>
+                  <div className="mt-1.5 flex flex-wrap gap-1">
+                    {REACTIONS.map((r) => (
+                      <button key={r} onClick={() => react(m, r)} aria-pressed={m.reaction === r}
+                        className={`rounded-full border px-2 py-0.5 text-xs ${m.reaction === r ? "border-rose-400 bg-rose-100 font-bold text-rose-700 dark:bg-rose-900 dark:text-rose-100" : "border-zinc-300 bg-white text-zinc-600 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300"}`}>
+                        {r}
+                      </button>
+                    ))}
+                  </div>
                 </li>
               ))}
             </ul>

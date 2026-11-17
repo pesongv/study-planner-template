@@ -142,3 +142,6 @@ create table if not exists public.messages (
 );
 alter table public.messages enable row level security;
 create index if not exists messages_student_id on public.messages ("student_id");
+
+-- 쪽지에 학생 반응(❤️ 고마워요 등) 칸 추가 (2026-11-18)
+alter table public.messages add column if not exists "reaction" text not null default '';

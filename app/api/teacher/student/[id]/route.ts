@@ -49,6 +49,6 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/teacher/student
       date: q.date, subject: q.subject, question: q.question, answer: q.answer, type: q.type,
       result: q.correct === "TRUE" ? "정답" : q.correct === "FALSE" ? "오답" : "아직",
     })),
-    messages: (await readWhere("쪽지", { student_id: id }, 0)).reverse().map((m) => ({ text: m.text, sent: m.created_at, read: !!m.read_at })),
+    messages: (await readWhere("쪽지", { student_id: id }, 0)).reverse().map((m) => ({ text: m.text, sent: m.created_at, read: !!m.read_at, reaction: m.reaction })),
   });
 }
