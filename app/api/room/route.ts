@@ -24,6 +24,7 @@ export async function GET() {
       character: u.character,
       present: !!openSession(sessions, u.student_id, at, lastActive.get(u.student_id)),
       me: u.student_id === s.sid,
+      ...(s.role === "teacher" && { student_id: u.student_id }), // 학생에게는 학번을 안 보냄
     }))
     .sort((a, b) => a.seat_no - b.seat_no);
   return Response.json({ seats });
