@@ -30,7 +30,7 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/teacher/student
     })),
     todayGoals: goals.filter((g) => g.level === "day" && g.period_start === today).map((g) => ({ title: g.title, done: g.status === "done" })),
     week: { ...weekReport({ monday, logs, goals, certDays: me.certDays }), review: weekReviewOf(tabs.회고, id, monday) },
-    reflections: tabs.회고.filter((r) => r.student_id === id && r.learned).slice(-7).reverse().map((r) => ({ date: r.date, learned: r.learned, mood: r.mood })),
+    reflections: [...new Map(tabs.회고.filter((r) => r.student_id === id && r.learned).map((r) => [r.date, r])).values()].slice(-7).reverse().map((r) => ({ date: r.date, learned: r.learned, mood: r.mood })),
     wrong: tabs.퀴즈.filter((q) => q.student_id === id && q.correct === "FALSE").map((q) => ({ subject: q.subject, question: q.question, answer: q.answer })),
     // 계획: 이번 달·다음 달 월 목표, 이번 주 주간 목표, 앞으로 7일 할 일
     plans: {

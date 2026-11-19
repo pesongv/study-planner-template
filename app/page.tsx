@@ -125,8 +125,11 @@ export default function RoomPage() {
       </header>
       {preview && (
         <div className="flex items-center justify-between gap-2 rounded-2xl bg-indigo-600 px-4 py-2 text-sm text-white">
-          <span>🧪 학생 화면 미리보기 중 (테스트 계정)</span>
-          <button onClick={() => api("/api/preview/end", {}).then(() => location.assign("/teacher"))} className="min-h-11 rounded-lg bg-white px-3 font-semibold text-indigo-700">
+          <span className="leading-tight">
+            <b>🧪 학생 화면 미리보기 중</b>
+            <span className="block text-xs opacity-80">테스트 계정으로 보고 있어요</span>
+          </span>
+          <button onClick={() => api("/api/preview/end", {}).then(() => location.assign("/teacher"))} className="min-h-11 shrink-0 whitespace-nowrap rounded-lg bg-white px-3 font-semibold text-indigo-700">
             선생님 화면으로
           </button>
         </div>

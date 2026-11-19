@@ -40,6 +40,7 @@ function Reflection() {
   const [learned, setLearned] = useState("");
   const [mood, setMood] = useState("");
   const [saved, setSaved] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -54,7 +55,10 @@ function Reflection() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (busy) return;
+    setBusy(true); // 두 번 눌러도 한 번만 저장
     const res = await api("/api/reflections", { learned, mood });
+    setBusy(false);
     setError(res.error ?? "");
     if (!res.error) setSaved(true);
   }
@@ -74,7 +78,7 @@ function Reflection() {
         ))}
       </div>
       {error && <p className="text-sm text-rose-600">{error}</p>}
-      <button disabled={!learned.trim() || !mood || saved} className="btn">{saved ? "저장했어요 ✓" : "저장하기"}</button>
+      <button disabled={!learned.trim() || !mood || saved || busy} className="btn">{saved ? "저장했어요 ✓" : "저장하기"}</button>
     </form>
   );
 }
